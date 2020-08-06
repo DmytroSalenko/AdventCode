@@ -96,17 +96,21 @@ def parse_sequence(puzzle_input_file):
     return sequence
 
 
-if __name__ == '__main__':
-    input_file = 'task_2_input.txt'
+def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
     # according to the task
     num_sequence = parse_sequence(input_file)
     num_sequence[1] = 12
     num_sequence[2] = 2
-
     # do the calculation
     command_invoker = CommandInvoker(sequence=num_sequence)
     command_invoker.generate_commands()
     command_invoker.execute_commands()
-    puzzle_result = command_invoker.get_result_sequence()
-    print(puzzle_result[0])
+    result = command_invoker.get_result_sequence()
+    return result[0]
+
+
+if __name__ == '__main__':
+    input_file = 'task_2_input.txt'
+    puzzle_result = solution(input_file)
+    print(puzzle_result)
