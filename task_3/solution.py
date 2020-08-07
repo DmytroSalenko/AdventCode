@@ -180,14 +180,14 @@ if __name__ == '__main__':
     central_port_coordinates = Point(0, 0)
 
     parsed_steps = parse_wire_steps(input_file)
-    wire_1_steps, wire_2_steps = parsed_steps[0], parsed_steps[1]
+    first_wire_steps, second_wire_stels = parsed_steps[0], parsed_steps[1]
 
-    wire_1 = Wire(wire_1_steps, central_port_coordinates)
-    wire_2 = Wire(wire_2_steps, central_port_coordinates)
-    wire_1.create_lines()
-    wire_2.create_lines()
+    first_wire = Wire(first_wire_steps, central_port_coordinates)
+    second_wire = Wire(second_wire_stels, central_port_coordinates)
+    first_wire.create_lines()
+    second_wire.create_lines()
 
-    intersection_points = wire_1.get_intersection_points(wire_2)
+    intersection_points = first_wire.get_intersection_points(second_wire)
     closest_point = min(
         intersection_points,
         key=lambda t: t.manhattan_distance(central_port_coordinates)

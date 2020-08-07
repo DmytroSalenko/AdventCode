@@ -1,6 +1,6 @@
 # --- Day 3 Part Two: Crossed Wires ---
 import copy
-from task_3 import Point, Line, Wire, LineDirection, parse_wire_steps
+from task_3 import Point, Wire, LineDirection, parse_wire_steps
 
 
 class StepTrackedWire(Wire):
@@ -40,10 +40,17 @@ class StepTrackedWire(Wire):
 
 
 def get_intersection_points(steps, central_port_coordinates):
-    wire_1_steps, wire_2_steps = steps[0], steps[1]
+    """
+    Get the list of intersection points from the given list of steps
+    :param steps: List of step strings from the input file
+    :param central_port_coordinates: Coordinates of the pivot point
+    (Central port)
+    :return: Wire objects and their intersection points
+    """
+    first_wire_steps, second_wire_steps = steps[0], steps[1]
 
-    first_wire = StepTrackedWire(wire_1_steps, central_port_coordinates)
-    seconds_wire = StepTrackedWire(wire_2_steps, central_port_coordinates)
+    first_wire = StepTrackedWire(first_wire_steps, central_port_coordinates)
+    seconds_wire = StepTrackedWire(second_wire_steps, central_port_coordinates)
     first_wire.create_lines()
     seconds_wire.create_lines()
 
