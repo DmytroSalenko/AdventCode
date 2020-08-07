@@ -99,7 +99,7 @@ def parse_sequence(puzzle_input_file):
 def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
     # according to the task
-    num_sequence = parse_sequence(input_file)
+    num_sequence = parse_sequence(input_file_name)
     num_sequence[1] = 12
     num_sequence[2] = 2
     # do the calculation
