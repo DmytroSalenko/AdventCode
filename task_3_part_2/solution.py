@@ -35,31 +35,43 @@ class StepTrackedWire(Wire):
                 if point_tracker == point:
                     return step_count
 
-
         # at this point we should already reach the intersection
         raise Exception('The point is unreachable')
+
+
+def get_intersection_points(steps, central_port_coordinates):
+    wire_1_steps, wire_2_steps = steps[0], steps[1]
+
+    first_wire = StepTrackedWire(wire_1_steps, central_port_coordinates)
+    seconds_wire = StepTrackedWire(wire_2_steps, central_port_coordinates)
+    first_wire.create_lines()
+    seconds_wire.create_lines()
+
+    intersection_points = first_wire.get_intersection_points(seconds_wire)
+
+    return first_wire, seconds_wire, intersection_points
+
+
+def get_step_pairs(first_wire, second_wire, intersection_points):
+    first_wire_steps = []
+    second_wire_steps = []
+
+    for point in intersection_points:
+        first_wire_steps.append(first_wire.calculate_steps_to_point(point))
+        second_wire_steps.append(second_wire.calculate_steps_to_point(point))
+
+    return zip(first_wire_steps, second_wire_steps)
 
 
 if __name__ == '__main__':
     input_file = 'task_3_part_2_input.txt'
     central_port_coordinates = Point(0, 0)
-    parsed_results = parse_wire_steps(input_file)
-    wire_1_steps, wire_2_steps = parsed_results[0], parsed_results[1]
 
-    wire_1 = StepTrackedWire(wire_1_steps, central_port_coordinates)
-    wire_2 = StepTrackedWire(wire_2_steps, central_port_coordinates)
-    wire_1.create_lines()
-    wire_2.create_lines()
+    parsed_steps = parse_wire_steps(input_file)
 
-    intersection_points = wire_1.get_intersection_points(wire_2)
-
-    wire_1_point_steps = []
-    wire_2_point_steps = []
-
-    for point in intersection_points:
-        wire_1_point_steps.append(wire_1.calculate_steps_to_point(point))
-        wire_2_point_steps.append(wire_2.calculate_steps_to_point(point))
-
-
-    print(list(zip(wire_1_point_steps, wire_2_point_steps)))
+    step_pairs = get_step_pairs(
+        *get_intersection_points(parsed_steps, central_port_coordinates)
+    )
+    result = min(step_pairs, key=lambda t: sum(t))
+    print(sum(result))
 

@@ -39,6 +39,10 @@ class Line:
         else:
             return abs(self.start_point.x - self.end_point.x)
 
+    @property
+    def direction(self):
+        return self.step[0]
+
     def __init__(self, start_point, end_point, step):
         self.start_point = start_point
         self.end_point = end_point
@@ -63,8 +67,6 @@ class Line:
 
     def includes(self, point):
         """Check if the given point is on the line"""
-        # x_div = (point.x - self.start_point.x) / (self.end_point.x - self.start_point.x)
-        # y_div = (point.y - self.start_point.y) / (self.end_point.y - self.start_point.y)
         if self.is_horizontal:
             return (point.y == self.start_point.y
                     and self.start_point.x <= point.x <= self.end_point.x)
@@ -173,41 +175,23 @@ def parse_wire_steps(puzzle_input_file):
     return results
 
 
-def lowest_manhattan_distance(points_list, related_to):
-    """ Get the point with the lowest manhattan related to the
-    given pivot point"""
-    if not points_list: return None
-    min_point = points_list[0]
-    min_distance = min_point.manhattan_distance(related_to)
-    for current_point in points_list[1:]:
-        current_distance = current_point.manhattan_distance(related_to)
-        if current_distance < min_distance:
-            min_point = current_point
-            min_distance = current_distance
+if __name__ == '__main__':
+    input_file = 'task_3_input.txt'
+    central_port_coordinates = Point(0, 0)
 
-    return min_point, min_distance
+    parsed_steps = parse_wire_steps(input_file)
+    wire_1_steps, wire_2_steps = parsed_steps[0], parsed_steps[1]
 
-
-def solution(input_file_name, central_port_coordinates):
-    # get the list of wire steps
-    parsed_results = parse_wire_steps(input_file_name)
-    wire_1_steps, wire_2_steps = parsed_results[0], parsed_results[1]
-    # generate lines for each wire based on parsed steps
     wire_1 = Wire(wire_1_steps, central_port_coordinates)
     wire_2 = Wire(wire_2_steps, central_port_coordinates)
     wire_1.create_lines()
     wire_2.create_lines()
 
     intersection_points = wire_1.get_intersection_points(wire_2)
-    _, min_distance = \
-        lowest_manhattan_distance(intersection_points,
-                                  related_to=central_port_coordinates)
-    return min_distance
+    closest_point = min(
+        intersection_points,
+        key=lambda t: t.manhattan_distance(central_port_coordinates)
+    )
+    print(closest_point.manhattan_distance(central_port_coordinates))
 
-
-if __name__ == '__main__':
-    input_file = 'task_3_input.txt'
-    central_port_coordinates = Point(0, 0)
-    min_distance = solution(input_file, central_port_coordinates)
-    print(min_distance)
 
