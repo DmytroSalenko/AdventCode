@@ -1,1 +1,2 @@
-from .solution import CommandInvoker, parse_sequence
+from .solution import Command, AddCommand, MultCommand, Computer, \
+    CommandProducer, OpCode, parse_sequence

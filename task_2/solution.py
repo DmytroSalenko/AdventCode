@@ -11,80 +11,89 @@ class OpCode(Enum):
 
 
 class Command(metaclass=abc.ABCMeta):
-    def __init__(self, opcode, addr_1, addr_2, result_addr):
+    def __init__(self, opcode, param_1, param_2, result_addr, memory):
         self.opcode = opcode
-        self.addr_1 = addr_1
-        self.addr_2 = addr_2
+        self.param_1 = param_1
+        self.param_2 = param_2
         self.result_addr = result_addr
+        self.memory = memory
 
     @abc.abstractmethod
-    def execute(self, sequence):
+    def execute(self, *args, **kwargs):
         pass
 
 
 class AddCommand(Command):
     """Implementation of the addition command"""
-    def execute(self, sequence):
-        first_addend = sequence[self.addr_1]
-        second_addend = sequence[self.addr_2]
+
+    COMMAND_LENGTH = 4
+
+    def execute(self, *args, **kwargs):
+        first_addend = self.memory[self.param_1]
+        second_addend = self.memory[self.param_2]
         result = first_addend + second_addend
 
-        sequence[self.result_addr] = result
+        self.memory[self.result_addr] = result
 
 
 class MultCommand(Command):
     """Implementation of the multiplication command"""
-    def execute(self, sequence):
-        first_addend = sequence[self.addr_1]
-        second_addend = sequence[self.addr_2]
-        result = first_addend * second_addend
 
-        sequence[self.result_addr] = result
+    COMMAND_LENGTH = 4
+
+    def execute(self, *args, **kwargs):
+        first_factor = self.memory[self.param_1]
+        second_factor = self.memory[self.param_2]
+        result = first_factor * second_factor
+
+        self.memory[self.result_addr] = result
 
 
 class CommandProducer:
-    def __init__(self, sequence):
-        self.sequence = sequence
+    def __init__(self, memory):
+        self.memory = memory
 
-    def _chunks(self, n=4):
+    def _get_next_command(self):
         """Yield successive n-sized chunks from self.sequence."""
-        for i in range(0, len(self.sequence), n):
-            result = self.sequence[i:i + n]
+        for i in range(0, len(self.memory), 4):
+            result = self.memory[i:i + 4]
             yield *tuple(result),
 
-    def produce_commands(self):
+    def command_generator(self):
         """Generate a list of command objects depending of the command code of
         each"""
-        for (opcode, addr_1, addr_2, results_addr) in self._chunks():
+        for (opcode, addr_1, addr_2, results_addr) in self._get_next_command():
             if opcode == OpCode.ADD.value:
-                yield AddCommand(opcode, addr_1, addr_2, results_addr)
+                yield AddCommand(opcode, addr_1, addr_2, results_addr,
+                                 self.memory)
             elif opcode == OpCode.MULT.value:
-                yield MultCommand(opcode, addr_1, addr_2, results_addr)
+                yield MultCommand(opcode, addr_1, addr_2, results_addr,
+                                  self.memory)
             elif opcode == OpCode.TERM.value:
                 return
 
 
-class CommandInvoker:
+class Computer:
     """
     Basically, this is the implementation of the Command design pattern.
     The object of this class is responsible for creating of the command list and
     executing each command
     """
-    def __init__(self, sequence):
-        self.sequence = sequence
-        self.command_producer = CommandProducer(sequence)
+    def __init__(self, memory):
+        self.memory = memory
+        self.command_producer = CommandProducer(memory)
         self.commands = []
 
     def generate_commands(self):
-        for command in self.command_producer.produce_commands():
+        for command in self.command_producer.command_generator():
             self.commands.append(command)
 
-    def execute_commands(self):
+    def run_program(self):
         for command in self.commands:
-            command.execute(self.sequence)
+            command.execute()
 
-    def get_result_sequence(self):
-        return self.sequence
+    def get_memory_state(self):
+        return self.memory
 
 
 def parse_sequence(puzzle_input_file):
@@ -103,10 +112,10 @@ def solution(input_file_name):
     num_sequence[1] = 12
     num_sequence[2] = 2
     # do the calculation
-    command_invoker = CommandInvoker(sequence=num_sequence)
-    command_invoker.generate_commands()
-    command_invoker.execute_commands()
-    result = command_invoker.get_result_sequence()
+    computer = Computer(memory=num_sequence)
+    computer.generate_commands()
+    computer.run_program()
+    result = computer.get_memory_state()
     return result[0]
 
 

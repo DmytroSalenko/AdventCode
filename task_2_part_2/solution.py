@@ -1,5 +1,5 @@
 # --- Day 2: 1202 Program Alarm Part Two---
-from task_2 import CommandInvoker, parse_sequence
+from task_2 import Computer, parse_sequence
 
 DESIRED_RESULT = 19690720
 
@@ -11,10 +11,10 @@ def run_the_magic_program(input_sequence, noun, verb):
     input_sequence_copy[1] = noun
     input_sequence_copy[2] = verb
 
-    command_invoker = CommandInvoker(sequence=input_sequence_copy)
+    command_invoker = Computer(memory=input_sequence_copy)
     command_invoker.generate_commands()
-    command_invoker.execute_commands()
-    return command_invoker.get_result_sequence()[0]
+    command_invoker.run_program()
+    return command_invoker.get_memory_state()[0]
 
 
 def solution(input_sequence, desired_result=DESIRED_RESULT):
