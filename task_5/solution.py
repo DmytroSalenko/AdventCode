@@ -27,15 +27,29 @@ class ParameterModes(Enum):
 
 class Buffer(metaclass=abc.ABCMeta):
     @property
-    def value(self):
-        return self._value
+    def buffer(self):
+        return self._buffer
 
-    @value.setter
-    def value(self, value):
-        self._value = value
+    def __init__(self, values=None):
+        self._buffer = []
+        if values is not None:
+            self._buffer.extend(values)
 
-    def __init__(self, value=None):
-        self._value = value
+    def put_data(self, value):
+        self._buffer.append(value)
+
+    def get_buffer_data_chunk(self, n=1):
+        """Return first n numbers from the buffer"""
+        if self._buffer:
+            data = self._buffer[:n]
+            self._buffer = self._buffer[n:]
+            return data
+        else:
+            raise ValueError("Cant request input data from the empty buffer")
+
+    def get_buffer_data(self):
+        """Pop and return the first element from the buffer"""
+        return self._buffer.pop(0)
 
 
 class InputBuffer(Buffer):
@@ -128,7 +142,8 @@ class InputCommand(ExtendedCommand):
                          result_addr=result_addr)
 
     def execute(self, *args, **kwargs):
-        self.delegate.memory[self.result_addr] = self.delegate.input_buffer
+        self.delegate.memory[self.result_addr] = \
+            self.delegate.input_buffer.get_buffer_data()
 
 
 class OutputCommand(ExtendedCommand):
@@ -142,7 +157,9 @@ class OutputCommand(ExtendedCommand):
                          result_addr=result_addr)
 
     def execute(self, *args, **kwargs):
-        self.delegate.output_buffer = self.delegate.memory[self.result_addr]
+        self.delegate.output_buffer.put_data(
+            self.delegate.memory[self.result_addr]
+        )
 
 
 # ---- Command classes for the Part 2 of the task ------
@@ -199,19 +216,11 @@ class ExtendedComputer(Computer):
 
     @property
     def input_buffer(self):
-        return self._input_buffer.value
-
-    @input_buffer.setter
-    def input_buffer(self, value):
-        self._input_buffer.value = value
+        return self._input_buffer
 
     @property
     def output_buffer(self):
-        return self._output_buffer.value
-
-    @output_buffer.setter
-    def output_buffer(self, value):
-        self._output_buffer.value = value
+        return self._output_buffer
 
     @property
     def command_pointer(self):
@@ -281,9 +290,9 @@ def solution(input_file_name):
     num_sequence = parse_sequence(input_file_name)
     computer = ExtendedComputer(memory=num_sequence)
     # set the input value that we want to pass to the Input command
-    computer.input_buffer = 1
+    computer.input_buffer.put_data(1)
     computer.run_program()
-    return computer.output_buffer
+    return computer.output_buffer.buffer[-1]
 
 
 if __name__ == '__main__':

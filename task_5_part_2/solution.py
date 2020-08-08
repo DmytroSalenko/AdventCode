@@ -8,9 +8,9 @@ def solution(input_file_name):
     num_sequence = parse_sequence(input_file_name)
     computer = ExtendedComputer(memory=num_sequence)
     # set the input value that we want to pass to the Input command
-    computer.input_buffer = 5
+    computer.input_buffer.put_data(5)
     computer.run_program()
-    return computer.output_buffer
+    return computer.output_buffer.buffer[-1]
 
 
 if __name__ == '__main__':
