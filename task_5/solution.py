@@ -12,6 +12,10 @@ class OpCodeExtended(Enum):
     MULT = 2
     INPUT = 3
     OUTPUT = 4
+    JUMP_IF_TRUE = 5
+    JUMP_IF_FALSE = 6
+    LESS_THAN = 7
+    EQUALS = 8
     TERM = 99
 
 
@@ -141,12 +145,56 @@ class OutputCommand(ExtendedCommand):
         self.delegate.output_buffer = self.delegate.memory[self.result_addr]
 
 
+# ---- Command classes for the Part 2 of the task ------
+class JumpIfTrueCommand(ExtendedCommand):
+    COMMAND_LENGTH = 3
+
+    def __init__(self, delegate, extended_opcode, param_1_value, param_2_value):
+        super().__init__(delegate,
+                         extended_opcode,
+                         param_1_value,
+                         param_2_value,
+                         result_addr=None)
+
+    def execute(self,  *args, **kwargs):
+        if self.param_1.value != 0:
+            self.delegate.command_pointer = self.param_2.value
+
+
+class JumpIfFalseCommand(JumpIfTrueCommand):
+    COMMAND_LENGTH = 3
+
+    def execute(self, *args, **kwargs):
+        if self.param_1.value == 0:
+            self.delegate.command_pointer = self.param_2.value
+
+
+class LessThanCommand(ExtendedCommand):
+    def execute(self, *args, **kwargs):
+        if self.param_1.value < self.param_2.value:
+            self.delegate.memory[self.result_addr] = 1
+        else:
+            self.delegate.memory[self.result_addr] = 0
+
+
+class EqualsCommand(ExtendedCommand):
+    def execute(self, *args, **kwargs):
+        if self.param_1.value == self.param_2.value:
+            self.delegate.memory[self.result_addr] = 1
+        else:
+            self.delegate.memory[self.result_addr] = 0
+
+
 class ExtendedComputer(Computer):
     COMMAND_MAPPING = {
         OpCodeExtended.ADD.value: ExtendedAddCommand,
         OpCodeExtended.MULT.value: ExtendedMultCommand,
         OpCodeExtended.INPUT.value: InputCommand,
-        OpCodeExtended.OUTPUT.value: OutputCommand
+        OpCodeExtended.OUTPUT.value: OutputCommand,
+        OpCodeExtended.JUMP_IF_FALSE.value: JumpIfFalseCommand,
+        OpCodeExtended.JUMP_IF_TRUE.value: JumpIfTrueCommand,
+        OpCodeExtended.LESS_THAN.value: LessThanCommand,
+        OpCodeExtended.EQUALS.value: EqualsCommand
     }
 
     @property
@@ -192,12 +240,18 @@ class ExtendedComputer(Computer):
                 # return op_code if the op_code denotes the end of program
                 return op_code,
 
+            command_pointer_stored_value = self.command_pointer
+
             # get the required number of arguments based on the op_code
             command_length = self.COMMAND_MAPPING[op_code].COMMAND_LENGTH
             yield tuple(self.memory[
                   self.command_pointer:self.command_pointer + command_length
                   ])
-            self.command_pointer += command_length
+
+            # Check if the command_pointer hasn't been modified by one of the
+            # JUMP commands
+            if self.command_pointer == command_pointer_stored_value:
+                self.command_pointer += command_length
 
     def command_generator(self):
         """
