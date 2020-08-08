@@ -2,7 +2,7 @@
 from enum import Enum, unique
 import abc
 
-from task_2 import Command, Computer, parse_sequence
+from task_2 import Command, Computer, parse_program
 
 
 @unique
@@ -34,6 +34,9 @@ class Buffer(metaclass=abc.ABCMeta):
         self._buffer = []
         if values is not None:
             self._buffer.extend(values)
+
+    def clear_buffer(self):
+        self._buffer = []
 
     def put_data(self, value):
         self._buffer.append(value)
@@ -283,11 +286,15 @@ class ExtendedComputer(Computer):
         for command in self.command_generator():
             command.execute()
 
+    def set_program(self, program):
+        self.memory = program
+        self.command_pointer = 0
+
 
 def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
     # according to the task
-    num_sequence = parse_sequence(input_file_name)
+    num_sequence = parse_program(input_file_name)
     computer = ExtendedComputer(memory=num_sequence)
     # set the input value that we want to pass to the Input command
     computer.input_buffer.put_data(1)

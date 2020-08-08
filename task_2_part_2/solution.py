@@ -1,5 +1,5 @@
 # --- Day 2: 1202 Program Alarm Part Two---
-from task_2 import Computer, parse_sequence
+from task_2 import Computer, parse_program
 
 DESIRED_RESULT = 19690720
 
@@ -30,7 +30,7 @@ def solution(input_sequence, desired_result=DESIRED_RESULT):
 
 if __name__ == '__main__':
     input_file = 'task_2_part_2_input.txt'
-    num_sequence = parse_sequence(input_file)
+    num_sequence = parse_program(input_file)
     result = solution(num_sequence)
     print(result)
 

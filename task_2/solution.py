@@ -96,7 +96,7 @@ class Computer:
         return self.memory
 
 
-def parse_sequence(puzzle_input_file):
+def parse_program(puzzle_input_file):
     """Parse the list of values from the input file"""
     sequence = []
     with open(puzzle_input_file, 'r') as puzzle_input:
@@ -108,11 +108,11 @@ def parse_sequence(puzzle_input_file):
 def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
     # according to the task
-    num_sequence = parse_sequence(input_file_name)
-    num_sequence[1] = 12
-    num_sequence[2] = 2
+    program = parse_program(input_file_name)
+    program[1] = 12
+    program[2] = 2
     # do the calculation
-    computer = Computer(memory=num_sequence)
+    computer = Computer(memory=program)
     computer.generate_commands()
     computer.run_program()
     result = computer.get_memory_state()
