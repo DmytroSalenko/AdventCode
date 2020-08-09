@@ -114,6 +114,15 @@ class CommandParameter:
         else:
             raise ValueError('Unknown argument mode')
 
+    @value.setter
+    def value(self, value):
+        """value of the argument cant be set only if it is in the POSITION
+        mode (e.g a result_addr parameter)"""
+        if self._mode == ParameterModes.POSITION.value:
+            self._memory[self._value] = value
+        else:
+            raise ValueError('Trying to set a value of the immediate argument')
+
     def __init__(self, memory, value, mode):
         self._value = value
         self._memory = memory
@@ -122,31 +131,45 @@ class CommandParameter:
 
 class ExtendedCommand(Command):
     """Extension for the Command class. Supports argument modes"""
-    # default number of command parameters
-    COMMAND_LENGTH = 4
+    COMMAND_LENGTH = 4  # default number of command parameters
+    OPCODE_LENGTH = 2
 
     def __init__(self, delegate, extended_opcode, param_1_value, param_2_value,
                  result_addr):
         self.delegate = delegate
         # if only opcode is given, fill the string with leading zeroes to the
         # size of command + 1 since opcode takes 2 digits
-        opcode_string = f'%0{self.COMMAND_LENGTH + 1}d' % extended_opcode
-        op_code = int(opcode_string[-2:])
-        if param_1_value is not None:
-            param_1_mode = int(opcode_string[-3])
-            param_1 = CommandParameter(self.delegate.memory, param_1_value,
-                                       param_1_mode)
-        else:
-            param_1 = None
+        opcode_sting_len = self.COMMAND_LENGTH + self.OPCODE_LENGTH - 1
+        opcode_string = f'%0{opcode_sting_len}d' % extended_opcode
 
-        if param_1_value is not None:
-            param_2_mode = int(opcode_string[-4])
-            param_2 = CommandParameter(self.delegate.memory, param_2_value,
-                                       param_2_mode)
-        else:
-            param_2 = None
+        op_code = int(opcode_string[-self.OPCODE_LENGTH:])
+        command_param_values = [param_1_value, param_2_value, result_addr]
 
-        super().__init__(op_code, param_1, param_2, result_addr, None)
+        param_objects = self._generate_parameter_objects(opcode_string,
+                                                         command_param_values)
+
+        super().__init__(op_code, *param_objects, None)
+
+    def _generate_parameter_objects(self, opcode_string, parameters):
+        """A function to generate CommandParameter objects from the given
+        parameter values and parameter modes"""
+        param_mode_list = list(opcode_string[:-self.OPCODE_LENGTH])
+        param_mode_list.reverse()
+        param_mode_iterator = iter(param_mode_list)
+
+        param_objects = []
+
+        for param_value in parameters:
+            if param_value is not None:
+                mode = next(param_mode_iterator)
+                param_objects.append(
+                    CommandParameter(self.delegate.memory, param_value,
+                                     int(mode))
+                )
+            else:
+                param_objects.append(None)
+
+        return param_objects
 
     @abc.abstractmethod
     def execute(self, *args, **kwargs):
@@ -159,7 +182,7 @@ class ExtendedAddCommand(ExtendedCommand):
         second_addend = self.param_2.value
         result = first_addend + second_addend
         # store the result in Computer memory
-        self.delegate.memory[self.result_addr] = result
+        self.result_addr.value = result
 
 
 class ExtendedMultCommand(ExtendedCommand):
@@ -168,7 +191,7 @@ class ExtendedMultCommand(ExtendedCommand):
         second_factor = self.param_2.value
         result = first_factor * second_factor
         # store the result in Computer memory
-        self.delegate.memory[self.result_addr] = result
+        self.result_addr.value = result
 
 
 class InputCommand(ExtendedCommand):
@@ -186,7 +209,7 @@ class InputCommand(ExtendedCommand):
         self.delegate.input_buffer.request_input()
         # at this point subscribers should already put data to the
         # input_buffer
-        self.delegate.memory[self.result_addr] = \
+        self.result_addr.value = \
             self.delegate.input_buffer.value
 
 
@@ -201,7 +224,7 @@ class OutputCommand(ExtendedCommand):
                          result_addr=result_addr)
 
     def execute(self, *args, **kwargs):
-        output_value = self.delegate.memory[self.result_addr]
+        output_value = self.result_addr.value
         self.delegate.output_buffer.value = \
             output_value
         self.delegate.output_history.append(output_value)
@@ -234,17 +257,17 @@ class JumpIfFalseCommand(JumpIfTrueCommand):
 class LessThanCommand(ExtendedCommand):
     def execute(self, *args, **kwargs):
         if self.param_1.value < self.param_2.value:
-            self.delegate.memory[self.result_addr] = 1
+            self.result_addr.value = 1
         else:
-            self.delegate.memory[self.result_addr] = 0
+            self.result_addr.value = 0
 
 
 class EqualsCommand(ExtendedCommand):
     def execute(self, *args, **kwargs):
         if self.param_1.value == self.param_2.value:
-            self.delegate.memory[self.result_addr] = 1
+            self.result_addr.value = 1
         else:
-            self.delegate.memory[self.result_addr] = 0
+            self.result_addr.value = 0
 
 
 class ExtendedComputer(Computer):
