@@ -1,6 +1,9 @@
 # --- Day 7: Amplification Circuit ---
 import itertools
-from task_5 import ExtendedComputer, ObserverMixin
+
+from utils import ObserverMixin
+from intcode_computer import ExtendedComputer
+
 from task_2 import parse_program
 
 
