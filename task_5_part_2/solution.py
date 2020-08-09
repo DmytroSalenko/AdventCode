@@ -1,16 +1,15 @@
-from task_2 import parse_program
-from task_5 import ExtendedComputer
+from intcode_computer import IntcodeComputer, parse_program
 
 
 def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
     # according to the task
     num_sequence = parse_program(input_file_name)
-    computer = ExtendedComputer(memory=num_sequence)
+    computer = IntcodeComputer(memory=num_sequence)
     # set the input value that we want to pass to the Input command
-    computer.input_buffer.put_data(5)
+    computer.send_input_data(5)
     computer.run_program()
-    return computer.output_buffer.buffer[-1]
+    return computer.output_buffer.value
 
 
 if __name__ == '__main__':

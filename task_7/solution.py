@@ -2,9 +2,7 @@
 import itertools
 
 from utils import ObserverMixin
-from intcode_computer import ExtendedComputer
-
-from task_2 import parse_program
+from intcode_computer import IntcodeComputer, parse_program
 
 
 class Amplifier(ObserverMixin):
@@ -68,7 +66,7 @@ class Amplifier(ObserverMixin):
 
 def solution(input_file_name):
     program = parse_program(input_file_name)
-    computer = ExtendedComputer(memory=None)
+    computer = IntcodeComputer(memory=None)
 
     amp_A = Amplifier(computer, program)
     amp_B = Amplifier(computer, program)

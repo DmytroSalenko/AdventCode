@@ -1,14 +1,13 @@
-from task_2 import Computer
-from intcode_computer import OpCodeExtended, ExtendedAddCommand, \
-    ExtendedMultCommand, InputCommand, OutputCommand, JumpIfTrueCommand, \
+from intcode_computer import OpCodeExtended, AddCommand, \
+    MultiplyCommand, InputCommand, OutputCommand, JumpIfTrueCommand, \
     JumpIfFalseCommand, LessThanCommand, EqualsCommand, OutputBuffer, \
     InputBuffer
 
 
-class ExtendedComputer(Computer):
+class IntcodeComputer:
     COMMAND_MAPPING = {
-        OpCodeExtended.ADD.value: ExtendedAddCommand,
-        OpCodeExtended.MULT.value: ExtendedMultCommand,
+        OpCodeExtended.ADD.value: AddCommand,
+        OpCodeExtended.MULT.value: MultiplyCommand,
         OpCodeExtended.INPUT.value: InputCommand,
         OpCodeExtended.OUTPUT.value: OutputCommand,
         OpCodeExtended.JUMP_IF_FALSE.value: JumpIfFalseCommand,
@@ -38,7 +37,7 @@ class ExtendedComputer(Computer):
         return self._output_history
 
     def __init__(self, memory, input_buffer=None, output_buffer=None):
-        super().__init__(memory)
+        self.memory = memory
         self._command_pointer = 0
         self._output_buffer = OutputBuffer(output_buffer)
         self._input_buffer = InputBuffer(input_buffer)
@@ -97,3 +96,6 @@ class ExtendedComputer(Computer):
 
     def send_input_data(self, data):
         self._input_buffer.value = data
+
+    def get_memory_state(self):
+        return self.memory

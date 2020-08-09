@@ -2,7 +2,6 @@ import abc
 from enum import Enum, unique
 
 from intcode_computer.command_parameters import CommandParameter
-from task_2 import Command
 
 
 @unique
@@ -17,6 +16,19 @@ class OpCodeExtended(Enum):
     LESS_THAN = 7
     EQUALS = 8
     TERM = 99
+
+
+class Command(metaclass=abc.ABCMeta):
+    def __init__(self, opcode, param_1, param_2, result_addr, memory):
+        self.opcode = opcode
+        self.param_1 = param_1
+        self.param_2 = param_2
+        self.result_addr = result_addr
+        self.memory = memory
+
+    @abc.abstractmethod
+    def execute(self, *args, **kwargs):
+        pass
 
 
 class ExtendedCommand(Command):
@@ -66,7 +78,7 @@ class ExtendedCommand(Command):
         pass
 
 
-class ExtendedAddCommand(ExtendedCommand):
+class AddCommand(ExtendedCommand):
     def execute(self, *args, **kwargs):
         first_addend = self.param_1.value
         second_addend = self.param_2.value
@@ -75,7 +87,7 @@ class ExtendedAddCommand(ExtendedCommand):
         self.result_addr.value = result
 
 
-class ExtendedMultCommand(ExtendedCommand):
+class MultiplyCommand(ExtendedCommand):
     def execute(self, *args, **kwargs):
         first_factor = self.param_1.value
         second_factor = self.param_2.value
