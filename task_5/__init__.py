@@ -1,1 +1,2 @@
-from .solution import OpCodeExtended, ExtendedComputer, ExtendedCommand
+from .solution import OpCodeExtended, ExtendedComputer, ExtendedCommand, \
+    Observable, ObserverMixin

@@ -1,10 +1,10 @@
 # --- Day 7: Amplification Circuit ---
 import itertools
-from task_5 import ExtendedComputer
+from task_5 import ExtendedComputer, ObserverMixin
 from task_2 import parse_program
 
 
-class Amplifier:
+class Amplifier(ObserverMixin):
     @property
     def computer(self):
         return self._computer
@@ -17,30 +17,50 @@ class Amplifier:
     def phase_setting(self, value):
         self._phase_setting = value
 
+    @property
+    def input_signal(self):
+        return self._input_signal
+
+    @input_signal.setter
+    def input_signal(self, value):
+        self._input_signal = value
+
     def __init__(self, computer, program, phase_setting=None):
         self._computer = computer
         self._phase_setting = phase_setting
+        self._input_signal = 0
         self._program = program
         self._successor = None
+        # states of the amplifier
+        self._is_phase_setting_provided = False
 
     def set_successor(self, amp):
         self._successor = amp
 
-    def get_output_signal(self, input_signal=0):
+    def get_output_signal(self):
         self.computer.set_program(self._program.copy())
-        self.computer.input_buffer.clear_buffer()
-        self.computer.input_buffer.put_data(self.phase_setting)
-        self.computer.input_buffer.put_data(input_signal)
+        self.subscribe(self.computer.input_buffer, self.provide_amp_data)
         self.computer.run_program()
+        self.unsubscribe(self.computer.input_buffer)
 
-        output_signal = self.computer.output_buffer.buffer[-1]
+        output_signal = self.computer.output_buffer.value
 
         if self._successor is not None:
-            return self._successor.get_output_signal(
-                output_signal
-            )
+            self._successor.input_signal = output_signal
+            return self._successor.get_output_signal()
         else:
             return output_signal
+
+    def provide_amp_data(self, value):
+        """Observer callback to provide the phase config or input_signal
+         when input is requested by the computer"""
+        if value:
+            if not self._is_phase_setting_provided:
+                self.computer.send_input_data(self.phase_setting)
+                self._is_phase_setting_provided = True
+            else:
+                self.computer.send_input_data(self.input_signal)
+                self._is_phase_setting_provided = False
 
 
 def solution(input_file_name):

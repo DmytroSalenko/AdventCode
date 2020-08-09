@@ -25,41 +25,77 @@ class ParameterModes(Enum):
     IMMEDIATE = 1
 
 
-class Buffer(metaclass=abc.ABCMeta):
+class Observable:
     @property
-    def buffer(self):
-        return self._buffer
+    def value(self):
+        return self._value
 
-    def __init__(self, values=None):
-        self._buffer = []
-        if values is not None:
-            self._buffer.extend(values)
+    @value.setter
+    def value(self, value):
+        self._value = value
+        self.notify_subscribers(value)
 
-    def clear_buffer(self):
-        self._buffer = []
+    @property
+    def subscribers(self):
+        return self._subscribers
 
-    def put_data(self, value):
-        self._buffer.append(value)
+    def __init__(self, value):
+        self._value = value
+        self._subscribers = {}
 
-    def get_buffer_data_chunk(self, n=1):
-        """Return first n numbers from the buffer"""
-        if self._buffer:
-            data = self._buffer[:n]
-            self._buffer = self._buffer[n:]
-            return data
-        else:
-            raise ValueError("Cant request input data from the empty buffer")
+    def subscribe(self, subscriber, subscriber_callback):
+        subscriber_id = id(subscriber)
+        if subscriber_id not in self._subscribers.keys():
+            self._subscribers[id(subscriber)] = subscriber_callback
 
-    def get_buffer_data(self):
-        """Pop and return the first element from the buffer"""
-        return self._buffer.pop(0)
+    def unsubscribe(self, subscriber):
+        self._subscribers.pop(id(subscriber))
 
-
-class InputBuffer(Buffer):
-    pass
+    def notify_subscribers(self, new_value):
+        for subscriber_callback in self._subscribers.values():
+            subscriber_callback(new_value)
 
 
-class OutputBuffer(Buffer):
+class ObserverMixin:
+    def subscribe(self, observable, callback):
+        observable.subscribe(self, callback)
+
+    def unsubscribe(self, observable):
+        observable.unsubscribe(self)
+
+
+class Buffer:
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+
+    def __init__(self, value=None):
+        self._value = value
+
+
+class InputBuffer(Observable, Buffer):
+    def __init__(self, value=None):
+        super().__init__(value)
+        self._input_requested = Observable(False)
+
+    def request_input(self):
+        self._input_requested.value = True
+
+    def subscribe(self, subscriber, callback):
+        self._input_requested.subscribe(subscriber, callback)
+
+    def unsubscribe(self, subscriber):
+        self._input_requested.unsubscribe(subscriber)
+
+    def notify_subscribers(self, new_value):
+        pass
+
+
+class OutputBuffer(Observable, Buffer):
     pass
 
 
@@ -109,6 +145,7 @@ class ExtendedCommand(Command):
                                        param_2_mode)
         else:
             param_2 = None
+
         super().__init__(op_code, param_1, param_2, result_addr, None)
 
     @abc.abstractmethod
@@ -145,8 +182,12 @@ class InputCommand(ExtendedCommand):
                          result_addr=result_addr)
 
     def execute(self, *args, **kwargs):
+        # notify subscribers that input is requested
+        self.delegate.input_buffer.request_input()
+        # at this point subscribers should already put data to the
+        # input_buffer
         self.delegate.memory[self.result_addr] = \
-            self.delegate.input_buffer.get_buffer_data()
+            self.delegate.input_buffer.value
 
 
 class OutputCommand(ExtendedCommand):
@@ -160,9 +201,10 @@ class OutputCommand(ExtendedCommand):
                          result_addr=result_addr)
 
     def execute(self, *args, **kwargs):
-        self.delegate.output_buffer.put_data(
-            self.delegate.memory[self.result_addr]
-        )
+        output_value = self.delegate.memory[self.result_addr]
+        self.delegate.output_buffer.value = \
+            output_value
+        self.delegate.output_history.append(output_value)
 
 
 # ---- Command classes for the Part 2 of the task ------
@@ -233,11 +275,16 @@ class ExtendedComputer(Computer):
     def command_pointer(self, value):
         self._command_pointer = value
 
+    @property
+    def output_history(self):
+        return self._output_history
+
     def __init__(self, memory, input_buffer=None, output_buffer=None):
         super().__init__(memory)
         self._command_pointer = 0
         self._output_buffer = OutputBuffer(output_buffer)
         self._input_buffer = InputBuffer(input_buffer)
+        self._output_history = []
 
     def _get_next_command(self):
         """
@@ -290,6 +337,9 @@ class ExtendedComputer(Computer):
         self.memory = program
         self.command_pointer = 0
 
+    def send_input_data(self, data):
+        self._input_buffer.value = data
+
 
 def solution(input_file_name):
     # parse the sequence of commands and replace two elements with values
@@ -297,9 +347,9 @@ def solution(input_file_name):
     num_sequence = parse_program(input_file_name)
     computer = ExtendedComputer(memory=num_sequence)
     # set the input value that we want to pass to the Input command
-    computer.input_buffer.put_data(1)
+    computer.send_input_data(1)
     computer.run_program()
-    return computer.output_buffer.buffer[-1]
+    return computer.output_buffer.value
 
 
 if __name__ == '__main__':
