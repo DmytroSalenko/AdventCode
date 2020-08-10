@@ -49,6 +49,7 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
         self._panels_tracker = defaultdict(
             lambda: {'times_painted': 0, 'color': PaintColors.BLACK.value}
         )
+        # self._panels_tracker[(0, 0)]['color'] = PaintColors.WHITE.value
         self._robot_current_direction = RobotDirections.UP.value
         self._robot_current_position = {'x': 0, 'y': 0}
         self._robot_output_state = RobotOutputState.COLOR.value
@@ -61,10 +62,14 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
         self._computer.run_program()
 
     def provide_input(self, value):
+        """Provide the color of a plate the robot is over as the input to the
+        computer program"""
         color = self.check_current_panel_color()
         self._computer.send_input_data(color)
 
     def get_output(self, output):
+        """Get the color or the turn direction from the computer program
+        depending on what it produces and update robot position"""
         if self._robot_output_state == RobotOutputState.COLOR.value:
             color = output
             self.update_panel_state(color)
@@ -80,12 +85,15 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
             self._robot_output_state = RobotOutputState.COLOR.value
 
     def check_current_panel_color(self):
+        """Get the color of a panel the robot is currently over"""
         position = self.robot_position
         current_coordinates = (position['x'], position['y'])
         color = self._panels_tracker[current_coordinates]['color']
         return color
 
     def update_robot_position(self, turn_direction):
+        """Update the position of the robot depending on the turn direction and
+        current coordinates"""
         current_position = self.robot_position
         facing_direction = self.robot_direction
 
@@ -148,10 +156,15 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
         self._panels_tracker[coordinates]['color'] = color
 
 
-if __name__ == '__main__':
-    input_file = '../task_11/task_11_input.txt'
-    program = parse_program(input_file)
+def solution(input_file_name):
+    program = parse_program(input_file_name)
     computer = IntcodeComputer(program=None)
     robot_controller = EmergencyHullPaintingRobotControl(computer, program)
     robot_controller.run_program()
-    print(len(robot_controller.panels_tracker))
+    return len(robot_controller.panels_tracker)
+
+
+if __name__ == '__main__':
+    input_file = '../task_11/task_11_input.txt'
+    result = solution(input_file)
+    print(result)
