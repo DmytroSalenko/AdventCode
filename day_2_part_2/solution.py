@@ -28,7 +28,7 @@ def solution(input_sequence, desired_result=DESIRED_RESULT):
 
 
 if __name__ == '__main__':
-    input_file = 'task_2_part_2_input.txt'
+    input_file = '../inputs/task_2_part_2_input.txt'
     num_sequence = parse_program(input_file)
     result = solution(num_sequence)
     print(result)

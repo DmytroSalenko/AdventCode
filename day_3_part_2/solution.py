@@ -71,7 +71,7 @@ def get_step_pairs(first_wire, second_wire, intersection_points):
 
 
 if __name__ == '__main__':
-    input_file = 'task_3_part_2_input.txt'
+    input_file = '../inputs/task_3_part_2_input.txt'
     central_port_coordinates = Point(0, 0)
 
     parsed_steps = parse_wire_steps(input_file)

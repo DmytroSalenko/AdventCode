@@ -13,6 +13,6 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../day_9/task_9_input.txt'
+    input_file = '../inputs/task_9_input.txt'
     result = solution(input_file)
     print(result)

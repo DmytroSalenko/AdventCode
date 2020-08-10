@@ -14,7 +14,7 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../day_5/task_5_input.txt'
+    input_file = '../inputs/task_5_input.txt'
     puzzle_result = solution(input_file)
     print(puzzle_result)
 

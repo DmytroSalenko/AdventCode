@@ -164,6 +164,6 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../day_11/task_11_input.txt'
+    input_file = '../inputs/task_11_input.txt'
     result = solution(input_file)
     print(result)

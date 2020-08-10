@@ -65,5 +65,5 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../day_11_part_2/task_11__part_2_input.txt'
+    input_file = '../inputs/task_11__part_2_input.txt'
     solution(input_file)

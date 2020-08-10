@@ -176,7 +176,7 @@ def parse_wire_steps(puzzle_input_file):
 
 
 if __name__ == '__main__':
-    input_file = 'task_3_input.txt'
+    input_file = '../inputs/task_3_input.txt'
     central_port_coordinates = Point(0, 0)
 
     parsed_steps = parse_wire_steps(input_file)

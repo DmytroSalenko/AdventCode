@@ -30,6 +30,6 @@ def solution(puzzle_input_file):
 
 
 if __name__ == '__main__':
-    input_file = '../day_1/task_1_input.txt'
+    input_file = '../inputs/task_1_input.txt'
     print(solution(input_file))
 
