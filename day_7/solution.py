@@ -100,7 +100,7 @@ def set_phases(amp_list, config):
 
 
 if __name__ == '__main__':
-    input_file = '../task_7/task_7_input.txt'
+    input_file = '../day_7/task_7_input.txt'
     result = solution(input_file)
     print(result)
 

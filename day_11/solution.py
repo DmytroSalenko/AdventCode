@@ -49,7 +49,6 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
         self._panels_tracker = defaultdict(
             lambda: {'times_painted': 0, 'color': PaintColors.BLACK.value}
         )
-        # self._panels_tracker[(0, 0)]['color'] = PaintColors.WHITE.value
         self._robot_current_direction = RobotDirections.UP.value
         self._robot_current_position = {'x': 0, 'y': 0}
         self._robot_output_state = RobotOutputState.COLOR.value
@@ -165,6 +164,6 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../task_11/task_11_input.txt'
+    input_file = '../day_11/task_11_input.txt'
     result = solution(input_file)
     print(result)

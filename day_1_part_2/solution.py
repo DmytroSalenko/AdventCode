@@ -1,5 +1,5 @@
 # --- Day 1 Part Two ---
-from task_1 import calculate_fuel
+from day_1 import calculate_fuel
 
 
 def calculate_additional_fuel(initial_fuel):
@@ -30,6 +30,6 @@ def solution(puzzle_input_file):
 
 
 if __name__ == '__main__':
-    input_file = '../task_1/task_1_input.txt'
+    input_file = '../day_1/task_1_input.txt'
     print(solution(input_file))
 

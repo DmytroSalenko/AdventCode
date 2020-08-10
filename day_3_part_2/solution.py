@@ -1,6 +1,6 @@
 # --- Day 3 Part Two: Crossed Wires ---
 import copy
-from task_3 import Point, Wire, LineDirection, parse_wire_steps
+from day_3 import Point, Wire, LineDirection, parse_wire_steps
 
 
 class StepTrackedWire(Wire):
