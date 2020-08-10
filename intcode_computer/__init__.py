@@ -4,6 +4,6 @@ from .commands import OpCodeExtended, ExtendedCommand, JumpIfTrueCommand, \
     JumpIfFalseCommand, LessThanCommand, EqualsCommand, OutputCommand, \
     InputCommand, MultiplyCommand, AddCommand, AdjustRelativeBaseCommand
 from .utils import parse_program
-from .memory import Memory
+from .memory import Memory, DynamicMemory
 from .computer import IntcodeComputer
 

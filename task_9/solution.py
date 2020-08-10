@@ -6,6 +6,7 @@ def solution(input_file_name):
     # according to the task
     num_sequence = parse_program(input_file_name)
     computer = IntcodeComputer(program=num_sequence)
+    computer.send_input_data(1)
     # set the input value that we want to pass to the Input command
     computer.run_program()
     return computer.output_buffer.value

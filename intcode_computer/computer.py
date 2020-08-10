@@ -1,7 +1,7 @@
 from intcode_computer import OpCodeExtended, AddCommand, \
     MultiplyCommand, InputCommand, OutputCommand, JumpIfTrueCommand, \
     JumpIfFalseCommand, LessThanCommand, AdjustRelativeBaseCommand, \
-    EqualsCommand, OutputBuffer, InputBuffer, Memory
+    EqualsCommand, OutputBuffer, InputBuffer, DynamicMemory, Memory
 
 
 class IntcodeComputer:
@@ -54,7 +54,7 @@ class IntcodeComputer:
         self.memory.container = value
 
     def __init__(self, program, input_buffer=None, output_buffer=None):
-        self._memory = Memory(program)
+        self._memory = DynamicMemory(program)
         self._command_pointer = 0
         self._output_buffer = OutputBuffer(output_buffer)
         self._input_buffer = InputBuffer(input_buffer)
