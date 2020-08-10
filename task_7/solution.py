@@ -66,7 +66,7 @@ class Amplifier(ObserverMixin):
 
 def solution(input_file_name):
     program = parse_program(input_file_name)
-    computer = IntcodeComputer(memory=None)
+    computer = IntcodeComputer(program=None)
 
     amp_A = Amplifier(computer, program)
     amp_B = Amplifier(computer, program)

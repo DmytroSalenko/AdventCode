@@ -15,6 +15,7 @@ class OpCodeExtended(Enum):
     JUMP_IF_FALSE = 6
     LESS_THAN = 7
     EQUALS = 8
+    ADJUST_REL_BASE = 9
     TERM = 99
 
 
@@ -65,7 +66,8 @@ class ExtendedCommand(Command):
             if param_value is not None:
                 mode = next(param_mode_iterator)
                 param_objects.append(
-                    CommandParameter(self.delegate.memory, param_value,
+                    CommandParameter(self.delegate,
+                                     param_value,
                                      int(mode))
                 )
             else:
@@ -170,3 +172,17 @@ class EqualsCommand(ExtendedCommand):
             self.result_addr.value = 1
         else:
             self.result_addr.value = 0
+
+
+class AdjustRelativeBaseCommand(ExtendedCommand):
+    COMMAND_LENGTH = 2
+
+    def __init__(self, delegate, extended_opcode, param_1_value):
+        super().__init__(delegate,
+                         extended_opcode,
+                         param_1_value=param_1_value,
+                         param_2_value=None,
+                         result_addr=None)
+
+    def execute(self, *args, **kwargs):
+        self.delegate.relative_base += self.param_1.value

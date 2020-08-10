@@ -1,7 +1,7 @@
 from intcode_computer import OpCodeExtended, AddCommand, \
     MultiplyCommand, InputCommand, OutputCommand, JumpIfTrueCommand, \
-    JumpIfFalseCommand, LessThanCommand, EqualsCommand, OutputBuffer, \
-    InputBuffer
+    JumpIfFalseCommand, LessThanCommand, AdjustRelativeBaseCommand, \
+    EqualsCommand, OutputBuffer, InputBuffer, Memory
 
 
 class IntcodeComputer:
@@ -13,7 +13,8 @@ class IntcodeComputer:
         OpCodeExtended.JUMP_IF_FALSE.value: JumpIfFalseCommand,
         OpCodeExtended.JUMP_IF_TRUE.value: JumpIfTrueCommand,
         OpCodeExtended.LESS_THAN.value: LessThanCommand,
-        OpCodeExtended.EQUALS.value: EqualsCommand
+        OpCodeExtended.EQUALS.value: EqualsCommand,
+        OpCodeExtended.ADJUST_REL_BASE.value: AdjustRelativeBaseCommand
     }
 
     @property
@@ -36,12 +37,21 @@ class IntcodeComputer:
     def output_history(self):
         return self._output_history
 
-    def __init__(self, memory, input_buffer=None, output_buffer=None):
-        self.memory = memory
+    @property
+    def relative_base(self):
+        return self._relative_base
+
+    @relative_base.setter
+    def relative_base(self, value):
+        self._relative_base = value
+
+    def __init__(self, program, input_buffer=None, output_buffer=None):
+        self.memory = program
         self._command_pointer = 0
         self._output_buffer = OutputBuffer(output_buffer)
         self._input_buffer = InputBuffer(input_buffer)
         self._output_history = []
+        self._relative_base = 0
 
     def _get_next_command(self):
         """
@@ -91,7 +101,7 @@ class IntcodeComputer:
             command.execute()
 
     def set_program(self, program):
-        self.memory = program
+        self.memory.container = program
         self.command_pointer = 0
 
     def send_input_data(self, data):

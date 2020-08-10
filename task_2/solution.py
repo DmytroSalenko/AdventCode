@@ -9,7 +9,7 @@ def solution(input_file_name):
     program[1] = 12
     program[2] = 2
     # do the calculation
-    computer = IntcodeComputer(memory=program)
+    computer = IntcodeComputer(program=program)
     computer.run_program()
     result = computer.get_memory_state()
     return result[0]

@@ -5,6 +5,7 @@ class ParameterModes(Enum):
     """Thus Enum contains different modes for the Command object parameters"""
     POSITION = 0
     IMMEDIATE = 1
+    RELATIVE = 2
 
 
 class CommandParameter:
@@ -19,6 +20,9 @@ class CommandParameter:
             return self._memory[self._value]
         elif self._mode == ParameterModes.IMMEDIATE.value:
             return self._value
+        elif self._mode == ParameterModes.RELATIVE.value:
+            relative_position = self._delegate.relative_base + self._value
+            return self._memory[relative_position]
         else:
             raise ValueError('Unknown argument mode')
 
@@ -28,10 +32,14 @@ class CommandParameter:
         mode (e.g a result_addr parameter)"""
         if self._mode == ParameterModes.POSITION.value:
             self._memory[self._value] = value
+        elif self._mode == ParameterModes.RELATIVE.value:
+            relative_position = self._delegate.relative_base + self._value
+            self._memory[relative_position] = value
         else:
             raise ValueError('Trying to set a value of the immediate argument')
 
-    def __init__(self, memory, value, mode):
+    def __init__(self, delegate, value, mode):
+        self._delegate = delegate
         self._value = value
-        self._memory = memory
         self._mode = mode
+        self._memory = self._delegate.memory

@@ -11,7 +11,7 @@ def run_the_magic_program(input_sequence, noun, verb):
     input_sequence_copy[1] = noun
     input_sequence_copy[2] = verb
 
-    command_invoker = IntcodeComputer(memory=input_sequence_copy)
+    command_invoker = IntcodeComputer(program=input_sequence_copy)
     command_invoker.run_program()
     return command_invoker.get_memory_state()[0]
 
