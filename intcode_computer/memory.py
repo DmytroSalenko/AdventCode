@@ -1,4 +1,7 @@
 class Memory:
+    """Storage for the IntComputer class. It should store the command
+    instructions to run the program. This class behaves as a normal list
+    except it may contain some additional logic if required"""
     @property
     def container(self):
         return self._container
@@ -22,6 +25,9 @@ class Memory:
 
 
 class DynamicMemory(Memory):
+    """This class behaves exactly as its superclass but also it is capable
+    dynamically extend the capacity of memory when computer tries to access
+    address outside of the currently allocated memory"""
     def __getitem__(self, item):
         try:
             return super().__getitem__(item)
