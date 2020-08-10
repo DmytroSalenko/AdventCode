@@ -45,8 +45,16 @@ class IntcodeComputer:
     def relative_base(self, value):
         self._relative_base = value
 
+    @property
+    def memory(self):
+        return self._memory
+
+    @memory.setter
+    def memory(self, value):
+        self.memory.container = value
+
     def __init__(self, program, input_buffer=None, output_buffer=None):
-        self.memory = program
+        self._memory = Memory(program)
         self._command_pointer = 0
         self._output_buffer = OutputBuffer(output_buffer)
         self._input_buffer = InputBuffer(input_buffer)
@@ -100,7 +108,7 @@ class IntcodeComputer:
         for command in self.command_generator():
             command.execute()
 
-    def set_program(self, program):
+    def load_program(self, program):
         self.memory = program
         self.command_pointer = 0
 

@@ -39,7 +39,7 @@ class Amplifier(ObserverMixin):
         self._successor = amp
 
     def get_output_signal(self):
-        self.computer.set_program(self._program.copy())
+        self.computer.load_program(self._program.copy())
         self.subscribe(self.computer.input_buffer, self.provide_amp_data)
         self.computer.run_program()
         self.unsubscribe(self.computer.input_buffer)
