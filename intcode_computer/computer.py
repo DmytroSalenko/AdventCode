@@ -101,7 +101,7 @@ class IntcodeComputer:
             command.execute()
 
     def set_program(self, program):
-        self.memory.container = program
+        self.memory = program
         self.command_pointer = 0
 
     def send_input_data(self, data):
