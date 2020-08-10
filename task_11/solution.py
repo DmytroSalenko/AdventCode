@@ -109,38 +109,36 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
                                   turn_direction):
         updated_position = current_position
         if facing_direction == RobotDirections.LEFT.value:
-            if turn_direction == RobotDirections.LEFT.value:
-                updated_position['y'] -= 1
-                updated_direction = RobotDirections.DOWN.value
-            else:
-                updated_position['y'] += 1
-                updated_direction = RobotDirections.UP.value
+            updated_direction = RobotDirections.DOWN.value if \
+                (turn_direction == RobotDirections.LEFT.value) \
+                else RobotDirections.UP.value
         else:
-            if turn_direction == RobotDirections.LEFT.value:
-                updated_position['y'] += 1
-                updated_direction = RobotDirections.UP.value
-            else:
-                updated_position['y'] -= 1
-                updated_direction = RobotDirections.DOWN.value
+            updated_direction = RobotDirections.UP.value if \
+                (turn_direction == RobotDirections.LEFT.value) \
+                else RobotDirections.DOWN.value
+
+        if updated_direction == RobotDirections.UP.value:
+            updated_position['y'] += 1
+        else:
+            updated_position['y'] -= 1
+
         return updated_position, updated_direction
 
     def _update_horizontal_position(self, current_position, facing_direction,
                                     turn_direction):
         updated_position = current_position
         if facing_direction == RobotDirections.UP.value:
-            if turn_direction == RobotDirections.LEFT.value:
-                updated_position['x'] -= 1
-                updated_direction = RobotDirections.LEFT.value
-            else:
-                updated_position['x'] += 1
-                updated_direction = RobotDirections.RIGHT.value
+            updated_direction = turn_direction
         else:
-            if turn_direction == RobotDirections.LEFT.value:
-                updated_position['x'] += 1
-                updated_direction = RobotDirections.RIGHT.value
-            else:
-                updated_position['x'] -= 1
-                updated_direction = RobotDirections.LEFT.value
+            updated_direction = RobotDirections.RIGHT.value if \
+                (turn_direction == RobotDirections.LEFT.value) \
+                else RobotDirections.LEFT.value
+
+        if updated_direction == RobotDirections.LEFT.value:
+            updated_position['x'] -= 1
+        else:
+            updated_position['x'] += 1
+
         return updated_position, updated_direction
 
     def update_panel_state(self, color):
