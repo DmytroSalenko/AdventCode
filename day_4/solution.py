@@ -3,7 +3,7 @@ import abc
 
 
 class NumberProcessingHandler(metaclass=abc.ABCMeta):
-    """Abstract class for the password processing handlers. These hanlders
+    """Abstract class for the password processing handlers. These handlers
      check that the password conform to the certain rules"""
     def __init__(self, successor=None):
         self.successor = successor
@@ -53,7 +53,7 @@ class IncreaseNumberCheckHandler(NumberProcessingHandler):
             raise ValueError('Digits should never decrease')
 
 
-if __name__ == '__main__':
+def solution():
     num_range = (246515, 739106)
     # compose a chain of responsibility
     adjacent_number_check_handler = AdjacentNumberCheckHandler()
@@ -68,4 +68,11 @@ if __name__ == '__main__':
         except ValueError:
             continue
 
-    print(password_count)
+    return password_count
+
+
+if __name__ == '__main__':
+    import os
+    os.chdir('..')
+
+    print(solution())

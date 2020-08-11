@@ -1,6 +1,8 @@
 # --- Day 1 Part Two ---
 from day_1 import calculate_fuel
 
+INPUT_FILE = './inputs/task_1_input.txt'
+
 
 def calculate_additional_fuel(initial_fuel):
     """
@@ -17,9 +19,12 @@ def calculate_additional_fuel(initial_fuel):
         return additional_fuel + calculate_additional_fuel(additional_fuel)
 
 
-def solution(puzzle_input_file):
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
     fuel_sum = 0
-    with open(puzzle_input_file, 'r') as puzzle_input:
+    with open(input_file, 'r') as puzzle_input:
         for line in puzzle_input:
             payload_fuel = calculate_fuel(line)
             fuel_for_fuel = calculate_additional_fuel(payload_fuel)
@@ -30,6 +35,8 @@ def solution(puzzle_input_file):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_1_input.txt'
-    print(solution(input_file))
+    import os
+    os.chdir('..')
+
+    print(solution())
 

@@ -1,11 +1,15 @@
 # --- Day 2: 1202 Program Alarm ---
 from intcode_computer import IntcodeComputer, parse_program
 
+INPUT_FILE = './inputs/task_2_input.txt'
 
-def solution(input_file_name):
+
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
     # parse the sequence of commands and replace two elements with values
     # according to the task
-    program = parse_program(input_file_name)
+    program = parse_program(input_file)
     program[1] = 12
     program[2] = 2
     # do the calculation
@@ -16,6 +20,7 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_2_input.txt'
-    puzzle_result = solution(input_file)
-    print(puzzle_result)
+    import os
+    os.chdir('..')
+
+    print(solution())

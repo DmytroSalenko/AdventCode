@@ -25,7 +25,7 @@ class StrictAdjacentNumberCheckHandler(AdjacentNumberCheckHandler):
             self.successor.process(number)
 
 
-if __name__ == '__main__':
+def solution():
     num_range = (246515, 739106)
     # compose a chain of responsibility
     increase_number_check_handler = IncreaseNumberCheckHandler()
@@ -42,4 +42,8 @@ if __name__ == '__main__':
         except ValueError:
             continue
 
-    print(password_count)
+    return password_count
+
+
+if __name__ == '__main__':
+    print(solution())

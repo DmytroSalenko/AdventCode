@@ -2,6 +2,8 @@
 import copy
 from day_3 import Point, Wire, LineDirection, parse_wire_steps
 
+INPUT_FILE = './inputs/task_3_part_2_input.txt'
+
 
 class StepTrackedWire(Wire):
     def calculate_steps_to_point(self, point):
@@ -70,8 +72,10 @@ def get_step_pairs(first_wire, second_wire, intersection_points):
     return zip(first_wire_steps, second_wire_steps)
 
 
-if __name__ == '__main__':
-    input_file = '../inputs/task_3_part_2_input.txt'
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
     central_port_coordinates = Point(0, 0)
 
     parsed_steps = parse_wire_steps(input_file)
@@ -80,5 +84,13 @@ if __name__ == '__main__':
         *get_intersection_points(parsed_steps, central_port_coordinates)
     )
     result = min(step_pairs, key=lambda t: sum(t))
-    print(sum(result))
+    return sum(result)
+
+
+if __name__ == '__main__':
+    import os
+    os.chdir('..')
+
+    result = solution()
+    print(result)
 

@@ -1,5 +1,6 @@
-# --- Day 1: The Tyranny of the Rocket Equation ---
 import math
+
+INPUT_FILE = './inputs/task_1_input.txt'
 
 
 def calculate_fuel(mass, divisor=3, subtrahend=2):
@@ -15,14 +16,19 @@ def calculate_fuel(mass, divisor=3, subtrahend=2):
     return math.floor(numeric_mass / divisor) - subtrahend
 
 
-def solution(puzzle_input_file):
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
     fuel_sum = 0
-    with open(puzzle_input_file, 'r') as puzzle_input:
+    with open(input_file, 'r') as puzzle_input:
         for line in puzzle_input:
             fuel_sum += calculate_fuel(line)
     return fuel_sum
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_1_input.txt'
-    print(solution(input_file))
+    import os
+    os.chdir('..')
+
+    print(solution())

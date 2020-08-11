@@ -4,6 +4,8 @@ from collections import defaultdict
 from utils import ObserverMixin
 from intcode_computer import IntcodeComputer, parse_program
 
+INPUT_FILE = './inputs/task_11_input.txt'
+
 
 class PaintColors(Enum):
     BLACK = 0
@@ -155,8 +157,11 @@ class EmergencyHullPaintingRobotControl(ObserverMixin):
         self._panels_tracker[coordinates]['color'] = color
 
 
-def solution(input_file_name):
-    program = parse_program(input_file_name)
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
+    program = parse_program(input_file)
     computer = IntcodeComputer(program=None)
     robot_controller = EmergencyHullPaintingRobotControl(computer, program)
     robot_controller.run_program()
@@ -164,6 +169,7 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_11_input.txt'
-    result = solution(input_file)
-    print(result)
+    import os
+    os.chdir('..')
+
+    print(solution())

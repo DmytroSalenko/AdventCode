@@ -1,6 +1,8 @@
 from intcode_computer import IntcodeComputer, parse_program
 from day_11 import PaintColors, EmergencyHullPaintingRobotControl
 
+INPUT_FILE = './inputs/task_11__part_2_input.txt'
+
 
 class HullPaintDisplay:
     """Class responsible for collecting and displaying the hull panel data"""
@@ -48,8 +50,11 @@ class HullPaintDisplay:
                 self.pixel_list[row][col] = '#'
 
 
-def solution(input_file_name):
-    program = parse_program(input_file_name)
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
+    program = parse_program(input_file)
     computer = IntcodeComputer(program=None)
     robot_controller = EmergencyHullPaintingRobotControl(computer, program)
     robot_controller.panels_tracker[(0, 0)]['color'] = PaintColors.WHITE.value
@@ -65,5 +70,6 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_11__part_2_input.txt'
-    solution(input_file)
+    import os
+    os.chdir('..')
+    solution()

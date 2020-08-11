@@ -1,6 +1,8 @@
 # --- Day 3: Crossed Wires ---
 from enum import Enum
 
+INPUT_FILE = './inputs/task_3_input.txt'
+
 
 class LineDirection(Enum):
     LEFT = 'L'
@@ -175,15 +177,16 @@ def parse_wire_steps(puzzle_input_file):
     return results
 
 
-if __name__ == '__main__':
-    input_file = '../inputs/task_3_input.txt'
-    central_port_coordinates = Point(0, 0)
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
 
+    central_port_coordinates = Point(0, 0)
     parsed_steps = parse_wire_steps(input_file)
-    first_wire_steps, second_wire_stels = parsed_steps[0], parsed_steps[1]
+    first_wire_steps, second_wire_steps = parsed_steps[0], parsed_steps[1]
 
     first_wire = Wire(first_wire_steps, central_port_coordinates)
-    second_wire = Wire(second_wire_stels, central_port_coordinates)
+    second_wire = Wire(second_wire_steps, central_port_coordinates)
     first_wire.create_lines()
     second_wire.create_lines()
 
@@ -192,6 +195,13 @@ if __name__ == '__main__':
         intersection_points,
         key=lambda t: t.manhattan_distance(central_port_coordinates)
     )
-    print(closest_point.manhattan_distance(central_port_coordinates))
+    return closest_point.manhattan_distance(central_port_coordinates)
+
+
+if __name__ == '__main__':
+    import os
+    os.chdir('..')
+
+    print(solution())
 
 

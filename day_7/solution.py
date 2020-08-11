@@ -4,6 +4,8 @@ import itertools
 from utils import ObserverMixin
 from intcode_computer import IntcodeComputer, parse_program
 
+INPUT_FILE = './inputs/task_7_input.txt'
+
 
 class Amplifier(ObserverMixin):
     @property
@@ -64,8 +66,11 @@ class Amplifier(ObserverMixin):
                 self._is_phase_setting_provided = False
 
 
-def solution(input_file_name):
-    program = parse_program(input_file_name)
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
+    program = parse_program(input_file)
     computer = IntcodeComputer(program=None)
 
     amp_A = Amplifier(computer, program)
@@ -100,9 +105,10 @@ def set_phases(amp_list, config):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_7_input.txt'
-    result = solution(input_file)
-    print(result)
+    import os
+    os.chdir('..')
+
+    print(solution())
 
 
 

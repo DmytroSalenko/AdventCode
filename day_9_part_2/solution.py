@@ -1,10 +1,13 @@
 from intcode_computer import IntcodeComputer, parse_program
 
+INPUT_FILE = './inputs/task_9_part_2_input.txt'
 
-def solution(input_file_name):
-    # parse the sequence of commands and replace two elements with values
-    # according to the task
-    num_sequence = parse_program(input_file_name)
+
+def solution():
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+    # parse the sequence of commands and put the value as the computer input
+    num_sequence = parse_program(input_file)
     computer = IntcodeComputer(program=num_sequence)
     computer.send_input_data(2)
     # set the input value that we want to pass to the Input command
@@ -13,6 +16,7 @@ def solution(input_file_name):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_9_part_2_input.txt'
-    result = solution(input_file)
-    print(result)
+    import os
+    os.chdir('..')
+
+    print(solution())

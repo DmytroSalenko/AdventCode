@@ -1,6 +1,8 @@
 # --- Day 2: 1202 Program Alarm Part Two---
 from intcode_computer import IntcodeComputer, parse_program
 
+INPUT_FILE = './inputs/task_2_part_2_input.txt'
+
 DESIRED_RESULT = 19690720
 
 
@@ -16,10 +18,15 @@ def run_the_magic_program(input_sequence, noun, verb):
     return command_invoker.get_memory_state()[0]
 
 
-def solution(input_sequence, desired_result=DESIRED_RESULT):
+def solution(desired_result=DESIRED_RESULT):
+    from pathlib import Path
+    input_file = Path(INPUT_FILE)
+
+    program = parse_program(input_file)
+
     for noun in range(100):
         for verb in range(100):
-            program_result = run_the_magic_program(input_sequence, noun, verb)
+            program_result = run_the_magic_program(program, noun, verb)
 
             if program_result == desired_result:
                 return (100 * noun) + verb
@@ -28,8 +35,9 @@ def solution(input_sequence, desired_result=DESIRED_RESULT):
 
 
 if __name__ == '__main__':
-    input_file = '../inputs/task_2_part_2_input.txt'
-    num_sequence = parse_program(input_file)
-    result = solution(num_sequence)
+    import os
+    os.chdir('..')
+
+    result = solution()
     print(result)
 
